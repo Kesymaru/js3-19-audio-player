@@ -1,0 +1,19 @@
+{
+  "name": "audioplayer",
+  "version": "1.0.0",
+  "description": "simple audio player HTML5",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kesymaru/js3-19-audio-player.git"
+  },
+  "author": "Andrey Alfaro <andreyalfaro@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kesymaru/js3-19-audio-player/issues"
+  },
+  "homepage": "https://github.com/Kesymaru/js3-19-audio-player#readme"
+}
