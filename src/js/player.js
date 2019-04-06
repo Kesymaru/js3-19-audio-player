@@ -5,6 +5,7 @@ const Player = (function () {
         wav: 'audio/wav;',
     };
     const SONGS_URL = 'src/audio';
+
     return class Player {
         support = {};
         songUrl = null;
@@ -13,15 +14,17 @@ const Player = (function () {
         mutedIcon = null;
         playIcon = null;
         repeatIcon = null;
-        timer = null;
+        timeElement = null;
+        sliderElement = null;
+        durationElement = null;
 
-
+        // values
         _loaded = false;
         _muted = false;
         _playing = false;
         _repeat = false;
-        _time = 0;
-        
+        _time = 0; // current time formated
+
         constructor (selector, songUrl = null) {
             this.container = document.querySelector(selector);
 
@@ -33,8 +36,7 @@ const Player = (function () {
                 Object.keys(FORMATS)
                     .forEach(f => {
                         let canPlay = this.audio.canPlayType(FORMATS[f]);
-                        if(canPlay === 'probably' || canPlay === 'maybe')
-                            this.support[f] = canPlay;
+                        if(canPlay !== '') this.support[f] = canPlay;
                     });
             }
 
@@ -45,7 +47,6 @@ const Player = (function () {
             this.load(songUrl);
 
             // EVENTS
-
             // play the loaded audio until the first fram is loaded
             this.audio.addEventListener('loadeddata', () => this.loaded = true);
 
@@ -53,16 +54,24 @@ const Player = (function () {
             // this.audio.addEventListener('ended', this.ended.bind(this));
         }
 
+        /**
+         * getter to get the format supported for the audio
+         * @returns {*}
+         */
         get format () {
             let formats = Object.keys(this.support);
             let probably = formats.filter(f => this.support[f] === 'probably');
             let maybe = formats.filter(f => this.support[f] === 'maybe');
 
-            if(maybe.length) return maybe[0];
             if(probably.length) return probably[0];
+            if(maybe.length) return maybe[0];
             return false;
         }
 
+        /**
+         * getter for the loaded
+         * @returns {boolean}
+         */
         get loaded () {
             return this._loaded;
         }
@@ -71,8 +80,11 @@ const Player = (function () {
             this._loaded = value;
 
             // update the play icon
-            if(this._loaded) this.playIcon.classList.add('active');
-            else this.playIcon.classList.remove('active');
+            this.playIcon.classList.toggle('active');
+
+            this.timeElement.innerText = this.time;
+            this.sliderElement.disabled = !this._loaded;
+            this.durationElement.innerText = this.duration;
         }
 
         get muted () {
@@ -110,15 +122,44 @@ const Player = (function () {
             this.repeatIcon.classList.toggle('active');
         }
 
+        /**
+         * Format the current time in minutes:seconds
+         * @returns {number}
+         */
         get time () {
-            return this.audio.currentTime;
+            return Player.FormatTime(this.audio.currentTime);
         }
 
         set time (value) {
             this._time = value;
 
-            // update the timer
-            this.timer.value = (this._time * 100) / this.audio.duration;
+            // update the slider time
+            this.sliderElement.value = (this._time * 100) / this.audio.duration;
+
+            // updated the current duration
+            this.timeElement.innerText = this.time;
+        }
+
+        get duration () {
+            return Player.FormatTime(this.audio.duration);
+        }
+
+        static FormatTime (time) {
+            if(time === 0) return '00:00';
+            let secs = Math.round(time);
+            // let hours = Math.floor(secs / (60 * 60));
+
+            let minutesDivisor = secs % (60 * 60);
+            let minutes = Math.floor(minutesDivisor / 60);
+
+            let secondsDivisor = minutesDivisor % 60;
+            let seconds = Math.ceil(secondsDivisor);
+
+            // hours = hours ? (hours < 10 ? `0${hours}` : hours) : '--';
+            minutes = minutes ? (minutes < 10 ? `0${minutes}` : minutes) : '00';
+            seconds = seconds < 10 ? `0${seconds}` : seconds;
+
+            return `${minutes}:${seconds}`;
         }
 
         /**
@@ -163,21 +204,36 @@ const Player = (function () {
         }
 
         _timer () {
-            let timer = document.createElement('div');
-            timer.classList.add('timer');
+            let row = document.createElement('div');
+            row.classList.add('row', 'timer');
 
-            this.timer = document.createElement('input');
-            this.timer.type = 'range';
-            // this.timer.disabled = true;
-            this.timer.min = 0;
-            this.timer.max = 100;
-            this.timer.value = 0;
+            let colTime = document.createElement('div');
+            colTime.classList.add('col', 's1');
+            this.timeElement = document.createElement('b');
+            colTime.appendChild(this.timeElement);
+
+            let colSlider = document.createElement('div');
+            colSlider.classList.add('col', 's10');
+            this.sliderElement = document.createElement('input');
+            this.sliderElement.type = 'range';
+            this.sliderElement.disabled = true;
+            this.sliderElement.min = 0;
+            this.sliderElement.max = 100;
+            this.sliderElement.value = 0;
+            colSlider.appendChild(this.sliderElement);
+
+            let colDuration = document.createElement('div');
+            colDuration.classList.add('col', 's1');
+            this.durationElement = document.createElement('b');
+            colDuration.appendChild(this.durationElement);
 
             // events
-            timer.addEventListener('change', this.timechanged.bind(this));
+            row.addEventListener('change', this.timechanged.bind(this));
 
-            timer.appendChild(this.timer);
-            return timer;
+            row.appendChild(colTime);
+            row.appendChild(colSlider);
+            row.appendChild(colDuration);
+            return row;
         }
 
         /**
@@ -187,7 +243,6 @@ const Player = (function () {
             if(!songUrl || !Object.keys(this.support).length)
                 return false;
 
-            this.loaded = false;
             this.songUrl = `${SONGS_URL}/${songUrl}.${this.format}`;
             this.audio.src = this.songUrl;
         }
@@ -220,7 +275,7 @@ const Player = (function () {
         }
 
         timechanged () {
-            this.audio.currentTime = (this.timer.value / 100) * this.audio.duration;
+            this.audio.timeElement = (this.sliderElement.value / 100) * this.audio.duration;
         }
 
         ended () {

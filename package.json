@@ -4,6 +4,7 @@
   "description": "simple audio player HTML5",
   "main": "index.html",
   "scripts": {
+    "start": "npm http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Kesymaru/js3-19-audio-player/issues"
   },
-  "homepage": "https://github.com/Kesymaru/js3-19-audio-player#readme"
+  "homepage": "https://github.com/Kesymaru/js3-19-audio-player#readme",
+  "devDependencies": {
+    "http-server": "^0.11.1"
+  }
 }
