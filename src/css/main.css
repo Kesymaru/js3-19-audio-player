@@ -1,0 +1,35 @@
+.player {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: rgba(0,0,0,.5);
+    color: rgba(0,0,0,.5);
+}
+
+.controls {
+    width: 300px;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.controls .play {
+    font-size: 50px;
+}
+
+.controls .mute,
+.controls .repeat {
+    font-size: 30px;
+}
+
+.active {
+    color: white;
+}
+
+.timer {
+    width: 300px;
+    padding-bottom: 10px;
+}
+
+.timer input {
+    width: 100%;
+}
