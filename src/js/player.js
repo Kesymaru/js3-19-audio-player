@@ -76,6 +76,10 @@ const Player = (function () {
             return this._loaded;
         }
 
+        /**
+         * Setter for the loaded flat, updates the current time, the slider and the duration
+         * @param value
+         */
         set loaded (value) {
             this._loaded = value;
 
@@ -87,10 +91,18 @@ const Player = (function () {
             this.durationElement.innerText = this.duration;
         }
 
+        /**
+         * getter for the muted
+         * @returns {boolean}
+         */
         get muted () {
             return this.audio.muted;
         }
 
+        /**
+         * setter for the mute, updates the muted icon automatically
+         * @param value
+         */
         set muted (value) {
             this._muted = value;
             this.audio.muted = this._muted;
@@ -99,10 +111,18 @@ const Player = (function () {
             this.mutedIcon.classList.toggle('active');
         }
 
+        /**
+         * getter for the playing flag
+         * @returns {boolean}
+         */
         get playing () {
             return this._playing;
         }
 
+        /**
+         * getter for the playing flag, updates the play icon
+         * @param value
+         */
         set playing (value) {
             this._playing = value;
 
@@ -110,10 +130,18 @@ const Player = (function () {
             this.playIcon.innerText = this._playing ? 'pause_circle_outline' : 'play_circle_outline';
         }
 
+        /**
+         * getter for the repeat flag
+         * @returns {boolean}
+         */
         get repeat () {
             return this._repeat;
         }
 
+        /**
+         * setter for the repeat flag, updates the repeat icon
+         * @param value
+         */
         set repeat (value) {
             this._repeat = value;
             this.audio.loop = this._repeat;
@@ -130,6 +158,10 @@ const Player = (function () {
             return Player.FormatTime(this.audio.currentTime);
         }
 
+        /**
+         * setter for the time value, updates the slider time value and the current time
+         * @param value
+         */
         set time (value) {
             this._time = value;
 
@@ -140,10 +172,20 @@ const Player = (function () {
             this.timeElement.innerText = this.time;
         }
 
+        /**
+         * getter for the duration time
+         * @returns {string}
+         */
         get duration () {
             return Player.FormatTime(this.audio.duration);
         }
 
+        /**
+         * Static method to format time in minutes:seconds
+         * @param time
+         * @returns {string}
+         * @constructor
+         */
         static FormatTime (time) {
             if(time === 0) return '00:00';
             let secs = Math.round(time);
@@ -175,6 +217,11 @@ const Player = (function () {
             this.container.appendChild(player);
         }
 
+        /**
+         * Compose the player controls
+         * @returns {HTMLElement}
+         * @private
+         */
         _controls () {
             let controls = document.createElement('div');
             controls.classList.add('controls');
@@ -203,6 +250,11 @@ const Player = (function () {
             return controls;
         }
 
+        /**
+         * Compose the timer slider
+         * @returns {HTMLElement}
+         * @private
+         */
         _timer () {
             let row = document.createElement('div');
             row.classList.add('row', 'timer');
@@ -247,37 +299,65 @@ const Player = (function () {
             this.audio.src = this.songUrl;
         }
 
+        /**
+         * toggle mute flag
+         */
         toggleMute () {
             this.muted = !this.muted;
         }
 
+        /**
+         * toggle play/pause
+         */
         togglePlay () {
             if(this.playing) this.pause();
             else this.play();
         }
 
+        /**
+         * toggle repeat flag
+         */
         toggleRepeat () {
             this.repeat = !this.repeat;
         }
 
+        /**
+         * play the audio
+         */
         play () {
             this.audio.play();
             this.playing = true;
         }
 
+        /**
+         * pause the audio
+         */
         pause () {
             this.audio.pause();
             this.playing = false;
         }
 
+        /**
+         * event hanlder for the timeupdate
+         * updates the time based on the audio current time
+         */
         timeupdate () {
             this.time = this.audio.currentTime;
         }
 
+        /**
+         * time changed event hanlder for the slider
+         * updates the time element with the corresponding time
+         */
         timechanged () {
             this.audio.timeElement = (this.sliderElement.value / 100) * this.audio.duration;
         }
 
+        /**
+         * ended event hanlder
+         * when a song has ended
+         * repeat automatically
+         */
         ended () {
             if(this.repeat) this.play();
         }
