@@ -12,6 +12,10 @@
     text-align: center;
 }
 
+.controls i {
+    cursor: pointer;
+}
+
 .controls .play {
     font-size: 50px;
 }
