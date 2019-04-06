@@ -260,12 +260,12 @@ const Player = (function () {
             row.classList.add('row', 'timer');
 
             let colTime = document.createElement('div');
-            colTime.classList.add('col', 's1');
+            colTime.classList.add('col', 's2');
             this.timeElement = document.createElement('b');
             colTime.appendChild(this.timeElement);
 
             let colSlider = document.createElement('div');
-            colSlider.classList.add('col', 's10');
+            colSlider.classList.add('col', 's8');
             this.sliderElement = document.createElement('input');
             this.sliderElement.type = 'range';
             this.sliderElement.disabled = true;
@@ -275,7 +275,7 @@ const Player = (function () {
             colSlider.appendChild(this.sliderElement);
 
             let colDuration = document.createElement('div');
-            colDuration.classList.add('col', 's1');
+            colDuration.classList.add('col', 's2', 'right-align');
             this.durationElement = document.createElement('b');
             colDuration.appendChild(this.durationElement);
 
